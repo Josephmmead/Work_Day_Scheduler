@@ -26,6 +26,10 @@ textarea{
   border-radius: 15px;
 }
 
+.description{
+  white-space: pre-wrap;
+}
+
 .row {
   white-space: pre-wrap;
   height: 80px;

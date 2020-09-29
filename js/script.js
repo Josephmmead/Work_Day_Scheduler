@@ -1,22 +1,24 @@
-var inputs = {
-  "9": [],
-  "10": [],
-  "11": [],
-  "12": [],
-  "13": [],
-  "14": [],
-  "15": [],
-  "16": [],
-  "17": []
+// var creating arrays for user inputed tasks
+var tasks = {
+  "8": " ",
+  "9": " ",
+  "10": " ",
+  "11": " ",
+  "12": " ",
+  "13": " ",
+  "14": " ",
+  "15": " ",
+  "16": " ",
+  "17": " ",
 };
 
 
 
-
+// runs all of the functions once the document is ready
 $(document).ready(function() {
-    setTheDate();
-
-    updateBackgrounds();
+  loadingTasks();
+  updateBackgrounds(); 
+  setTheDate();    
 });
  
 
@@ -29,14 +31,57 @@ function setTheDate(){
 
 
 // set text inputed within <textareas> to be saved to local storage via the save button
+function logTasks(){
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+};
 
-// set up save buttons on click function
+//  load the tasks from localStorage and add tasks 
+var loadingTasks = function() {
+  
+  var loadTasks = JSON.parse(localStorage.getItem("tasks"));
+  if (loadTasks) {
+      tasks = loadTasks;
 
-// change color of time rows based on the time it is
+      $.each(tasks, function(timeBlock, input) {
+          let hourDiv = $("#" + timeBlock);
+          addTask(input, hourDiv);
+      });
+  };
+};
+
+//  add a task in the row that corresponds to the specified hour 
+var addTask = function(taskText, hourDiv) {
+  
+  var taskDiv = hourDiv.find(".task");
+  var pTag = $("<p>")
+      .addClass("description")
+      .text(taskText);
+  taskDiv.html(pTag);
+};
+
+
+var replaceTextarea = function(textareaElement) {
+
+    var taskInfo = textareaElement.closest(".scheduler-row");
+    var textArea = taskInfo.find("textarea");  
+    var time = taskInfo.attr("id");
+    var text = textArea.val().trim();
+        
+    tasks[time] = [text];  
+
+    logTasks();
+    addTask(text, taskInfo);
+};
+
+
+  $(".saveBtn").on('click', function(){
+    replaceTextarea($(this));
+  });
+  
 
 
 // update the background on each row depending on time of day
-var updateBackgrounds = function() {
+function updateBackgrounds() {
   
   var currentHour = moment().hour();
   $(".scheduler-row").each( function() {
